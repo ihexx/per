@@ -112,6 +112,7 @@ class DQNAgent():
             self.epsilon -= self.epsilon_decay
 
         mini_batch, idxs, is_weights = self.memory.sample(self.batch_size)
+        batch_size = len(mini_batch)
         mini_batch = np.array(mini_batch).transpose()
 
         states = np.vstack(mini_batch[0])
@@ -131,7 +132,7 @@ class DQNAgent():
         # one-hot encoding
         a = torch.LongTensor(actions).view(-1, 1)
 
-        one_hot_action = torch.FloatTensor(self.batch_size, self.action_size).zero_()
+        one_hot_action = torch.FloatTensor(batch_size, self.action_size).zero_()
         one_hot_action.scatter_(1, a, 1)
 
         pred = torch.sum(pred.mul(Variable(one_hot_action)), dim=1)
@@ -151,7 +152,7 @@ class DQNAgent():
         errors = torch.abs(pred - target).data.numpy()
 
         # update priority
-        for i in range(self.batch_size):
+        for i in range(batch_size):
             idx = idxs[i]
             self.memory.update(idx, errors[i])
 
