@@ -1,11 +1,10 @@
 import random
 import numpy as np
 from SumTree import SumTree
-import warnings
 
 
 class Memory:  # stored as ( s, a, r, s_ ) in SumTree
-    def __init__(self, capacity, alpha=0.6, beta=0.4, beta_anneal_step=0.001, epsilon=0.01):
+    def __init__(self, capacity, alpha=0.6, beta=0.4, beta_anneal_step=0.001, epsilon=0.00000001):
         self.tree = SumTree(capacity)
         self.capacity = capacity
         self.a = alpha
@@ -26,27 +25,21 @@ class Memory:  # stored as ( s, a, r, s_ ) in SumTree
         idxs = []
         segment = self.tree.total() / n
         priorities = []
-        uninitialized_samples = 0
 
         self.beta = np.min([1. - self.e, self.beta + self.beta_increment_per_sampling])
 
         for i in range(n):
             a = segment * i
             b = segment * (i + 1)
+            data = 0
 
-            s = random.uniform(a, b)
-            (idx, p, data) = self.tree.get(s)
-
-            if data == 0:  # Pulled an invalid sample (uninitialized)
-                uninitialized_samples += 1
-                continue
+            while data == 0:
+                s = random.uniform(a, b)
+                (idx, p, data) = self.tree.get(s)
 
             priorities.append(p)
             batch.append(data)
             idxs.append(idx)
-
-        if uninitialized_samples > 0:
-            warnings.warn('Pulled {} uninitialized samples'.format(uninitialized_samples))
 
         sampling_probabilities = priorities / self.tree.total()
         is_weight = np.power(self.tree.n_entries * sampling_probabilities, -self.beta)
