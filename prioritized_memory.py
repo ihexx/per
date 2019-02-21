@@ -26,8 +26,6 @@ class Memory:  # stored as ( s, a, r, s_ ) in SumTree
         segment = self.tree.total() / n
         priorities = []
 
-        self.beta = np.min([1. - self.e, self.beta + self.beta_increment_per_sampling])
-
         for i in range(n):
             a = segment * i
             b = segment * (i + 1)
@@ -46,6 +44,9 @@ class Memory:  # stored as ( s, a, r, s_ ) in SumTree
         is_weight /= is_weight.max()
 
         return batch, idxs, is_weight
+
+    def step(self):
+        self.beta = np.min([1. - self.e, self.beta + self.beta_increment_per_sampling])
 
     def update(self, idx, error):
         p = self._get_priority(error)

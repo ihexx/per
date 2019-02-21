@@ -199,6 +199,7 @@ if __name__ == "__main__":
             # every time step do the training
             if agent.memory.tree.n_entries >= agent.train_start:
                 agent.train_model()
+                agent.memory.step()
 
             score += reward
             state = next_state
