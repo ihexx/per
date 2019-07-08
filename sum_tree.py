@@ -7,6 +7,7 @@ class SumTree:
     write = 0
 
     def __init__(self, capacity):
+        assert capacity > 0 and capacity & (capacity - 1) == 0, "capacity must be positive and a power of 2."
         self.capacity = capacity
         self.tree = numpy.zeros(2 * capacity - 1)
         self.data = numpy.zeros(capacity, dtype=object)
