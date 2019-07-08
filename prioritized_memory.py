@@ -5,6 +5,9 @@ from sum_tree import SumTree
 
 class Memory:  # stored as ( s, a, r, s_ ) in SumTree
     def __init__(self, capacity, alpha=0.6, beta=0.4, beta_anneal_step=0.001, epsilon=0.00000001):
+        tree_capacity = 1
+        while tree_capacity < size:
+            tree_capacity *= 2
         self.tree = SumTree(capacity)
         self.capacity = capacity
         self.a = alpha
